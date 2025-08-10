@@ -5,33 +5,130 @@
 <meta name="viewport" content="width=device-width,initial-scale=1" />
 <title>Strzeżona $karbonka</title>
 <style>
-  body{font-family:Inter, system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", Arial; margin:18px; background:#f7f7f8; color:#111;}
-  .login-screen, .app-screen{max-width:600px;margin:auto;text-align:center;}
-  .login-screen{margin-top:20vh;}
-  input[type=password]{padding:10px;width:80%;max-width:280px;margin-top:12px;border:1px solid #ccc;border-radius:6px;font-size:1rem;}
-  button{padding:10px 16px;margin-top:12px;font-size:1rem;border-radius:6px;border:1px solid #ccc;cursor:pointer;}
-  .hidden{display:none;}
-  /* Grid styling from previous version */
-  :root{
-    --cell-size:calc(min(6vmin, 60px));
-    --gap:6px;
-    --bg:#f7f7f8;
-    --cell-bg:#ffffff;
-    --cell-border:#ddd;
-    --cross-color:#ff3b30;
+  body {
+    font-family: Inter, system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", Arial;
+    margin: 18px;
+    background: #f7f7f8;
+    color: #111;
   }
-  header{display:flex;flex-direction:column;align-items:center;gap: 8px;px;margin-bottom:12px;}
-  h1{font-size:1.1rem;margin:0;}
-  .sum-box{background:#fff;border:1px solid var(--cell-border);padding:10px 14px;border-radius:8px;min-width:160px;box-shadow:0 1px 0 rgba(0,0,0,0.03);}
-  .controls{display:flex;gap:8px;justify-content:center;}
-  button.action{padding:8px 12px;border-radius:8px;border:1px solid var(--cell-border);background:white;cursor:pointer;}
-  main{display:grid;gap:var(--gap);justify-content:center;}
-  .grid{display:grid;grid-template-columns:repeat(10,var(--cell-size));grid-auto-rows:var(--cell-size);gap:var(--gap);}
-  .cell{border-radius:8px;border:1px solid var(--cell-border);background:var(--cell-bg);display:flex;align-items:center;justify-content:center;font-weight:600;cursor:pointer;user-select:none;position:relative;outline:none;}
-  .cell.crossed{background:#f1f5f9;color:#999;text-decoration:line-through;}
-  .cell.crossed::after{content:"✕"; position:absolute; font-size:1.2rem; color:var(--cross-color); top:6px; right:6px; font-weight:700;}
-  @media (max-width:640px){:root{--cell-size:calc(min(9vmin, 44px));}.sum-box{min-width:140px;}}
-  footer{margin-top:14px;font-size:.9rem;color:#444;}
+  .login-screen, .app-screen {
+    max-width: 600px;
+    margin: auto;
+    text-align: center;
+  }
+  .login-screen {
+    margin-top: 20vh;
+  }
+  input[type=password] {
+    padding: 10px;
+    width: 80%;
+    max-width: 280px;
+    margin-top: 12px;
+    border: 1px solid #ccc;
+    border-radius: 6px;
+    font-size: 1rem;
+  }
+  button {
+    padding: 10px 16px;
+    margin-top: 12px;
+    font-size: 1rem;
+    border-radius: 6px;
+    border: 1px solid #ccc;
+    cursor: pointer;
+  }
+  .hidden {
+    display: none;
+  }
+  :root {
+    --gap: 4px;
+    --bg: #f7f7f8;
+    --cell-bg: #ffffff;
+    --cell-border: #ddd;
+    --cross-color: #ff3b30;
+  }
+  header {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 8px;
+    margin-bottom: 12px;
+  }
+  h1, h2 {
+    font-size: 1.1rem;
+    margin: 0;
+  }
+  .sum-box {
+    background: #fff;
+    border: 1px solid var(--cell-border);
+    padding: 10px 14px;
+    border-radius: 8px;
+    min-width: 160px;
+    box-shadow: 0 1px 0 rgba(0, 0, 0, 0.03);
+  }
+  .controls {
+    display: flex;
+    gap: 8px;
+    justify-content: center;
+    margin-top: 14px;
+  }
+  button.action {
+    padding: 8px 12px;
+    border-radius: 8px;
+    border: 1px solid var(--cell-border);
+    background: white;
+    cursor: pointer;
+  }
+  main {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+  }
+  .grid {
+    display: grid;
+    grid-template-columns: repeat(10, 1fr);
+    gap: var(--gap);
+    max-width: 400px;
+    margin: 0 auto;
+    width: 100%;
+  }
+  .cell {
+    aspect-ratio: 1 / 1;
+    border-radius: 8px;
+    border: 1px solid var(--cell-border);
+    background: var(--cell-bg);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-weight: 600;
+    cursor: pointer;
+    user-select: none;
+    position: relative;
+    outline: none;
+  }
+  .cell.crossed {
+    background: #f1f5f9;
+    color: #999;
+    text-decoration: line-through;
+  }
+  .cell.crossed::after {
+    content: "✕";
+    position: absolute;
+    font-size: 1.2rem;
+    color: var(--cross-color);
+    top: 6px;
+    right: 6px;
+    font-weight: 700;
+  }
+  @media (max-width: 640px) {
+    .sum-box {
+      min-width: 140px;
+    }
+  }
+  footer {
+    margin-top: 14px;
+    font-size: 0.9rem;
+    color: #444;
+  }
 </style>
 </head>
 <body>
@@ -40,7 +137,7 @@
   <h2>Podaj hasło, aby otworzyć</h2>
   <h2 style="color: rgb(5, 183, 5);">$karbonkę</h2>
   <input type="password" id="password" placeholder="Tu jest miejsce na hasło" />
-  <br/>
+  <br />
   <button onclick="checkPassword()"><b>Otwórz</b></button>
   <p id="error" style="color:red;display:none;"><b>Nieprawidłowe hasło</b></p>
 </div>
@@ -49,7 +146,6 @@
   <header>
     <h2>$karbonka Strzeżona</h2>
     <div class="sum-box" aria-live="polite">Suma oszczędności: <strong id="sum" style="color: green;">0</strong></div>
-    
   </header>
   <main>
     <div class="grid" id="grid" role="grid"></div>
@@ -62,84 +158,86 @@
 </div>
 
 <script>
-(function(){
-  const STORAGE_KEY = "grid_1_100_crossed_secure";
-  const PASSWORD = "$$$"; // <--- ZMIEŃ HASŁO TUTAJ
+  (function () {
+    const STORAGE_KEY = "grid_1_100_crossed_secure";
+    const PASSWORD = "$$$"; // <--- ZMIEŃ HASŁO TUTAJ
 
-  window.checkPassword = function(){
-    const input = document.getElementById("password").value;
-    if(input === PASSWORD){
-      document.getElementById("login").classList.add("hidden");
-      document.getElementById("app").classList.remove("hidden");
-      initApp();
-    } else {
-      document.getElementById("error").style.display = "block";
-    }
-  };
-
-  function initApp(){
-    const grid = document.getElementById('grid');
-    const sumEl = document.getElementById('sum');
-    const resetBtn = document.getElementById('reset');
-    const toggleAllBtn = document.getElementById('toggleAll');
-
-    function loadState(){
-      try {
-        const data = localStorage.getItem(STORAGE_KEY);
-        return data ? JSON.parse(data) : [];
-      } catch(e){ return []; }
-    }
-
-    function saveState(state){
-      try {
-        localStorage.setItem(STORAGE_KEY, JSON.stringify(state));
-      } catch(e){}
-    }
-
-    const saved = loadState();
-    for(let i=1;i<=100;i++){
-      const btn = document.createElement('button');
-      btn.type = 'button';
-      btn.className = 'cell';
-      btn.dataset.num = String(i);
-      btn.textContent = i;
-      if(saved.includes(i)){
-        btn.classList.add('crossed');
+    window.checkPassword = function () {
+      const input = document.getElementById("password").value;
+      if (input === PASSWORD) {
+        document.getElementById("login").classList.add("hidden");
+        document.getElementById("app").classList.remove("hidden");
+        initApp();
+      } else {
+        document.getElementById("error").style.display = "block";
       }
-      btn.addEventListener('click', () => {
-        btn.classList.toggle('crossed');
+    };
+
+    function initApp() {
+      const grid = document.getElementById("grid");
+      const sumEl = document.getElementById("sum");
+      const resetBtn = document.getElementById("reset");
+      const toggleAllBtn = document.getElementById("toggleAll");
+
+      function loadState() {
+        try {
+          const data = localStorage.getItem(STORAGE_KEY);
+          return data ? JSON.parse(data) : [];
+        } catch (e) {
+          return [];
+        }
+      }
+
+      function saveState(state) {
+        try {
+          localStorage.setItem(STORAGE_KEY, JSON.stringify(state));
+        } catch (e) {}
+      }
+
+      const saved = loadState();
+      for (let i = 1; i <= 100; i++) {
+        const btn = document.createElement("button");
+        btn.type = "button";
+        btn.className = "cell";
+        btn.dataset.num = String(i);
+        btn.textContent = i;
+        if (saved.includes(i)) {
+          btn.classList.add("crossed");
+        }
+        btn.addEventListener("click", () => {
+          btn.classList.toggle("crossed");
+          updateSum();
+          persist();
+        });
+        grid.appendChild(btn);
+      }
+
+      function updateSum() {
+        let s = 0;
+        grid.querySelectorAll(".cell.crossed").forEach((c) => (s += Number(c.dataset.num) || 0));
+        sumEl.textContent = String(s);
+      }
+
+      function persist() {
+        const crossed = Array.from(grid.querySelectorAll(".cell.crossed")).map((c) => Number(c.dataset.num));
+        saveState(crossed);
+      }
+
+      resetBtn.addEventListener("click", () => {
+        grid.querySelectorAll(".cell.crossed").forEach((c) => c.classList.remove("crossed"));
         updateSum();
         persist();
       });
-      grid.appendChild(btn);
-    }
 
-    function updateSum(){
-      let s = 0;
-      grid.querySelectorAll('.cell.crossed').forEach(c => s += Number(c.dataset.num) || 0);
-      sumEl.textContent = String(s);
-    }
+      toggleAllBtn.addEventListener("click", () => {
+        grid.querySelectorAll(".cell").forEach((c) => c.classList.toggle("crossed"));
+        updateSum();
+        persist();
+      });
 
-    function persist(){
-      const crossed = Array.from(grid.querySelectorAll('.cell.crossed')).map(c => Number(c.dataset.num));
-      saveState(crossed);
-    }
-
-    resetBtn.addEventListener('click', () => {
-      grid.querySelectorAll('.cell.crossed').forEach(c => c.classList.remove('crossed'));
       updateSum();
-      persist();
-    });
-
-    toggleAllBtn.addEventListener('click', () => {
-      grid.querySelectorAll('.cell').forEach(c => c.classList.toggle('crossed'));
-      updateSum();
-      persist();
-    });
-
-    updateSum();
-  }
-})();
+    }
+  })();
 </script>
 
 </body>
