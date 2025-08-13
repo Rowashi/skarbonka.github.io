@@ -5,26 +5,68 @@
 <meta name="viewport" content="width=device-width,initial-scale=1" />
 <title>Strzeżona $karbonka</title>
 <style>
-  body{font-family:Inter, system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", Arial; margin:18px; background:#f7f7f8; color:#111;}
-  .login-screen, .app-screen{max-width:600px;margin:auto;text-align:center;}
-  .login-screen{margin-top:20vh;}
-  input[type=password]{padding:10px;width:80%;max-width:280px;margin-top:12px;border:1px solid #ccc;border-radius:6px;font-size:1rem;}
-  button{padding:10px 16px;margin-top:12px;font-size:1rem;border-radius:6px;border:1px solid #ccc;cursor:pointer;}
-  .hidden{display:none;}
-  :root{
-    --cell-size: 40px;
-    --gap:3px;
-    --bg:#f7f7f8;
-    --cell-bg:#ffffff;
-    --cell-border:#000000;
-    --active-color: green;
+  body {
+    font-family: Inter, system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", Arial;
+    margin: 18px;
+    background: #f7f7f8;
+    color: #111;
+    text-align: center;
   }
-  header{display:flex;flex-direction:column;align-items:center;gap: 8px;margin-bottom:12px;}
-  h1, h2{font-size:1.1rem;margin:0;}
-  .sum-box{background:#fff;border:1px solid var(--cell-border);padding:10px 14px;border-radius:8px;min-width:160px;box-shadow:0 1px 0 rgba(0,0,0,0.03);}
-  .controls{display:flex;gap:8px;justify-content:center;margin-top:12px;}
-  button.action{padding:8px 12px;border-radius:8px;border:1px solid var(--cell-border);background:white;cursor:pointer;}
-  main{display:flex; flex-direction: column; align-items: center;}
+  .login-screen, .app-screen {
+    max-width: 600px;
+    margin: auto;
+    text-align: center;
+  }
+  .login-screen {
+    margin-top: 20vh;
+  }
+  input[type=password] {
+    padding: 10px;
+    width: 80%;
+    max-width: 280px;
+    margin-top: 12px;
+    border: 1px solid #ccc;
+    border-radius: 6px;
+    font-size: 1rem;
+  }
+  button {
+    padding: 10px 16px;
+    margin-top: 12px;
+    font-size: 1rem;
+    border-radius: 6px;
+    border: 1px solid #ccc;
+    cursor: pointer;
+  }
+  .hidden {
+    display: none;
+  }
+  :root {
+    --cell-size: 40px;
+    --gap: 4px;
+    --cell-bg: #ffffff;
+    --cell-border: #ddd;
+  }
+  header {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 8px;
+    margin-bottom: 12px;
+  }
+  .sum-box {
+    background: #fff;
+    border: 1px solid var(--cell-border);
+    padding: 10px 14px;
+    border-radius: 8px;
+    min-width: 160px;
+    box-shadow: 0 1px 0 rgba(0,0,0,0.03);
+  }
+  .controls {
+    display: flex;
+    gap: 8px;
+    justify-content: center;
+    margin-top: 10px;
+  }
   .grid {
     display: grid;
     grid-template-columns: repeat(10, var(--cell-size));
@@ -44,26 +86,18 @@
     font-weight: 600;
     cursor: pointer;
     user-select: none;
-    outline: none;
-    font-size: 1rem;
-    color: #111;
-    transition: color 0.2s ease;
+    font-size: 0.9rem;
   }
   .cell.crossed {
-    color: var(--active-color);
+    color: green;
   }
   footer {
     margin-top: 14px;
     font-size: .9rem;
     color: #444;
   }
-  @media (max-width:640px){
-    :root{
-      --cell-size: 36px;
-    }
-    .sum-box{
-      min-width:140px;
-    }
+  canvas {
+    margin-top: 20px;
   }
 </style>
 </head>
@@ -85,7 +119,8 @@
   </header>
   <main>
     <div class="grid" id="grid" role="grid"></div>
-    <p><h2><b>Powodzenia w <b style="color: green;"><u>oszczędzaniu</u></b></h2></p>
+    <footer><b>Powodzenia w <b style="color: green;"><u>oszczędzaniu</u></b></footer>
+    <canvas id="chart" width="200" height="200"></canvas>
     <div class="controls" role="group" aria-label="Kontrolki">
       <button class="action" id="reset">Reset</button>
       <button class="action" id="toggleAll">Odwróć zaznaczenia</button>
@@ -96,7 +131,11 @@
 <script>
 (function(){
   const STORAGE_KEY = "grid_1_100_crossed_secure";
-  const PASSWORD = "$$$"; // <--- ZMIEŃ HASŁO TUTAJ
+  const PASSWORD = "$$$"; // Zmień hasło
+  const maxSum = 5050; // suma 1-100
+
+  const canvas = document.getElementById("chart");
+  const ctx = canvas.getContext("2d");
 
   window.checkPassword = function(){
     const input = document.getElementById("password").value;
@@ -134,17 +173,14 @@
       btn.type = 'button';
       btn.className = 'cell';
       btn.dataset.num = String(i);
-      btn.textContent = saved.includes(i) ? "$" : i;
+      btn.textContent = i;
       if(saved.includes(i)){
         btn.classList.add('crossed');
+        btn.textContent = "$";
       }
       btn.addEventListener('click', () => {
         btn.classList.toggle('crossed');
-        if(btn.classList.contains('crossed')){
-          btn.textContent = "$";
-        } else {
-          btn.textContent = btn.dataset.num;
-        }
+        btn.textContent = btn.classList.contains('crossed') ? "$" : i;
         updateSum();
         persist();
       });
@@ -155,11 +191,38 @@
       let s = 0;
       grid.querySelectorAll('.cell.crossed').forEach(c => s += Number(c.dataset.num) || 0);
       sumEl.textContent = String(s);
+      drawChart(s);
     }
 
     function persist(){
       const crossed = Array.from(grid.querySelectorAll('.cell.crossed')).map(c => Number(c.dataset.num));
       saveState(crossed);
+    }
+
+    function drawChart(currentSum) {
+      const percent = currentSum / maxSum;
+      ctx.clearRect(0, 0, 200, 200);
+      
+      // Tło (biały okrąg)
+      ctx.beginPath();
+      ctx.arc(100, 100, 90, 0, Math.PI * 2);
+      ctx.fillStyle = "#ffffff";
+      ctx.fill();
+      
+      // Zielony fragment
+      ctx.beginPath();
+      ctx.moveTo(100, 100);
+      ctx.arc(100, 100, 90, -Math.PI / 2, (percent * 2 * Math.PI) - Math.PI / 2);
+      ctx.closePath();
+      ctx.fillStyle = "#00aa00";
+      ctx.fill();
+
+      // Tekst procentu
+      ctx.fillStyle = "#000000";
+      ctx.font = "bold 20px Arial";
+      ctx.textAlign = "center";
+      ctx.textBaseline = "middle";
+      ctx.fillText(Math.round(percent * 100) + "%", 100, 100);
     }
 
     resetBtn.addEventListener('click', () => {
